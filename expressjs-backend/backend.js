@@ -19,7 +19,7 @@ app.post("/account/login", (req, res) => {
   const userToCheck = req.body;
   const user = users["users_list"].find(
     (user) =>
-      user["useridid"] === userToCheck.id &&
+      user["userid"] === userToCheck.userid &&
       user["password"] === userToCheck.password
   );
 
