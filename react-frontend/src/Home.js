@@ -1,3 +1,4 @@
+import axios from "axios";
 import { useState } from "react";
 import { useAuth } from "./context/AuthProvider";
 
@@ -6,13 +7,20 @@ export const Home = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleLogin = () => {
-    if (username === "bj" && password === "pass424") {
+  async function handleLogin() {
+    try {
+      const user = { userid: username, password: password };
+      const response = await axios.post(
+        "http://localhost:8000/account/login",
+        user
+      );
       value.onLogin();
-    } else {
-      alert("Invalid username or password");
+      return response;
+    } catch (error) {
+      console.log(error);
+      return false;
     }
-  };
+  }
 
   return (
     <>
