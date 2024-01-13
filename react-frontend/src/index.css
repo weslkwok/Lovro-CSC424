@@ -68,6 +68,14 @@ button {
 button {
   padding: 0.5rem;
 }
+button:hover {
+    background-color: lightgray;
+    color: white;
+  }
+
+ul {
+    line-height: 0.1;
+  }
 
 .instructions {
   font-size: 0.75rem;

@@ -1,31 +1,38 @@
 import axios from "axios";
+import React from "react";
 import { useState } from "react";
-import { useAuth } from "./context/AuthProvider";
 
-export const Home = () => {
-  const { value } = useAuth();
+export const Registration = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  async function handleLogin() {
+  async function handleRegistration() {
     try {
       const user = { userid: username, password: password };
       const response = await axios.post(
-        "http://localhost:8000/account/login",
+        "http://localhost:8000/account/registration",
         user
       );
-      value.onLogin();
       return response;
     } catch (error) {
-      if (error.response.status === 401) alert("Invalid credentials");
+      if (error.response.status === 400)
+        alert("Insufficient password strength");
+      if (error.response.status === 409) alert("Username already taken");
       console.log();
-      return false;
     }
   }
 
   return (
     <>
-      <h2>Home (Public)</h2>
+      <h2>Registration</h2>
+      <div>
+        Enter a username and a password. Password must:
+        <ul>
+          <li>Be at least 12 characters long</li>
+          <li>Contain at least one number and one symbol</li>
+          <li>Use both capital and lowercase letters</li>
+        </ul>
+      </div>
       <div>
         <label>
           Username:{" "}
@@ -47,8 +54,8 @@ export const Home = () => {
         </label>
       </div>
       <div>
-        <button type="button" onClick={handleLogin}>
-          Sign In
+        <button type="button" onClick={handleRegistration}>
+          Create Account
         </button>
       </div>
     </>
