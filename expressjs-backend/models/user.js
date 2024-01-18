@@ -13,11 +13,11 @@ const UserSchema = new mongoose.Schema(
       trim: true,
       validate(value) {
         if (value.length < 12)
-          throw new Error("Invalid password, must be at least 2 characters");
+          throw new Error("Invalid password, must be at least 12 characters");
       },
     },
   },
   { collection: "users_list" }
 );
 
-export default mongoose.model("User", UserSchema);
+export default mongoose.model("UserModel", UserSchema);

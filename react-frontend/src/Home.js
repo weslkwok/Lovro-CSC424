@@ -1,4 +1,5 @@
 import axios from "axios";
+import React from "react";
 import { useState } from "react";
 import { useAuth } from "./context/AuthProvider";
 
@@ -14,11 +15,11 @@ export const Home = () => {
         "http://localhost:8000/account/login",
         user
       );
-      value.onLogin();
+      if (response.status === 200) value.onLogin();
+
       return response;
     } catch (error) {
       if (error.response.status === 401) alert("Invalid credentials");
-      console.log();
       return false;
     }
   }

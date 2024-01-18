@@ -1,56 +1,48 @@
-const express = require("express");
+import express from "express";
+import cors from "cors";
+import {
+  checkUser,
+  getUserByName,
+  validatePassword,
+  addUser,
+} from "./models/user-services.js";
+
 const app = express();
-const cors = require("cors");
 const port = 8000;
 
 app.use(express.json());
 app.use(cors());
 
-const users = {
-  users_list: [{ userid: "bj", password: "pass424" }],
-};
-
 app.get("/", (req, res) => {
   res.send("Hello World!");
 });
 
-// check a user and password and return token
-app.post("/account/login", (req, res) => {
-  const userToCheck = req.body;
-  const user = users["users_list"].find(
-    (user) =>
-      user["userid"] === userToCheck.userid &&
-      user["password"] === userToCheck.password
-  );
+/******************************** User Routes *********************************/
 
-  if (user) {
+app.post("/account/login", async (req, res) => {
+  const userToCheck = req.body;
+  const user = await checkUser(userToCheck.userid, userToCheck.password);
+
+  if (user.length) {
     res.status(200).send("User successfully authenticated");
   } else {
     res.status(401).send("Invalid credentials");
   }
 });
 
-function validatePassword(password) {
-  const isLongEnough = password.length >= 12;
-  const hasNumber = /[0-9]/.test(password);
-  const hasSymbol = /[!@#$%^&*(),.?":{}|<>]/.test(password);
-  const hasUpper = /[A-Z]/.test(password);
-  const hasLower = /[a-z]/.test(password);
-
-  return isLongEnough && hasNumber && hasSymbol && hasUpper && hasLower;
-}
-
 // create a new user
-app.post("/account/registration", (req, res) => {
+app.post("/account/registration", async (req, res) => {
   const userToAdd = req.body;
-  const matchingUser = users["users_list"].find(
-    (user) => user["userid"] === userToAdd.userid
-  );
+  const matchingUser = await getUserByName(userToAdd.userid);
 
   if (validatePassword(userToAdd.password)) {
-    if (!matchingUser) {
-      users["users_list"].push(userToAdd);
-      res.status(201).send(userToAdd).end();
+    if (!matchingUser.length) {
+      const user = await addUser({
+        userid: userToAdd.userid,
+        password: userToAdd.password,
+      });
+      console.log(user);
+      res.status(201).send(user);
     } else {
       res.status(409).send("Conflicting username");
     }
@@ -59,9 +51,15 @@ app.post("/account/registration", (req, res) => {
   }
 });
 
-// get all users
 app.get("/users", (req, res) => {
-  res.send(users);
+  const userToCheck = req.body;
+  const user = checkUser(userToCheck.userid, userToCheck.password);
+
+  if (user) {
+    res.status(200).send("User successfully authenticated");
+  } else {
+    res.status(401).send("Invalid credentials");
+  }
 });
 
 app.listen(port, () => {

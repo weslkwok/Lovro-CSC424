@@ -15,10 +15,11 @@ export const Registration = () => {
       );
       return response;
     } catch (error) {
+      console.log(error);
       if (error.response.status === 400)
         alert("Insufficient password strength");
       if (error.response.status === 409) alert("Username already taken");
-      console.log();
+      return false;
     }
   }
 
