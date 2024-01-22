@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useEffect } from "react";
-import { useAuth } from "./context/AuthProvider";
+import { useAuth } from "../context/AuthProvider";
 
 export const Landing = () => {
   const { auth } = useAuth();
