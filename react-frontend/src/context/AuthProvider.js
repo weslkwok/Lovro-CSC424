@@ -1,6 +1,5 @@
 import { createContext, useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { fakeAuth } from "../utils/FakeAuth";
 
 const AuthContext = createContext({});
 
@@ -9,24 +8,25 @@ export const AuthProvider = ({ children }) => {
 
   const [token, setToken] = useState(null);
 
-  const handleLogin = async () => {
-    const token = await fakeAuth();
+  const handleLogin = async (token) => {
+    document.cookie = `token=${token}`;
     setToken(token);
     navigate("/landing");
   };
 
   const handleLogout = () => {
+    document.cookie = `token=${null}`;
     setToken(null);
   };
 
-  const value = {
+  const auth = {
     token,
     onLogin: handleLogin,
     onLogout: handleLogout,
   };
 
   return (
-    <AuthContext.Provider value={{ value }}>{children}</AuthContext.Provider>
+    <AuthContext.Provider value={{ auth }}>{children}</AuthContext.Provider>
   );
 };
 

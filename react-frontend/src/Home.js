@@ -1,10 +1,9 @@
 import axios from "axios";
-import React from "react";
 import { useState } from "react";
 import { useAuth } from "./context/AuthProvider";
 
 export const Home = () => {
-  const { value } = useAuth();
+  const { auth } = useAuth();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
@@ -15,7 +14,7 @@ export const Home = () => {
         "http://localhost:8000/account/login",
         user
       );
-      if (response.status === 200) value.onLogin();
+      if (response.status === 200) auth.onLogin(response.data);
 
       return response;
     } catch (error) {

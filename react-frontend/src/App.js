@@ -37,15 +37,15 @@ const App = () => {
 };
 
 const Navigation = () => {
-  const { value } = useAuth();
+  const { auth } = useAuth();
 
   return (
     <nav>
       <Link to="/home">Home</Link>
       <Link to="/registration">Registration</Link>
       <Link to="/landing">Landing</Link>
-      {value.token && (
-        <button type="button" onClick={value.onLogout}>
+      {auth.token && (
+        <button type="button" onClick={auth.onLogout}>
           Sign Out
         </button>
       )}

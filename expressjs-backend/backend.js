@@ -1,14 +1,21 @@
 import express from "express";
 import cors from "cors";
+import dotenv from "dotenv";
 import {
-  checkUser,
+  generateAccessToken,
+  authenticateToken,
+  authenticateUser,
   getUserByName,
   validatePassword,
   addUser,
+  getUsers,
 } from "./models/user-services.js";
 
+dotenv.config({ path: "./config.env" });
+
 const app = express();
-const port = 8000;
+
+const port = process.env.PORT;
 
 app.use(express.json());
 app.use(cors());
@@ -17,14 +24,16 @@ app.get("/", (req, res) => {
   res.send("Hello World!");
 });
 
-/******************************** User Routes *********************************/
+/*********************************   APIs   **********************************/
 
+// authenticate user
 app.post("/account/login", async (req, res) => {
   const userToCheck = req.body;
-  const user = await checkUser(userToCheck.userid, userToCheck.password);
+  const user = await authenticateUser(userToCheck.userid, userToCheck.password);
 
   if (user.length) {
-    res.status(200).send("User successfully authenticated");
+    const token = generateAccessToken({ userid: userToCheck.userid });
+    res.status(200).json(token);
   } else {
     res.status(401).send("Invalid credentials");
   }
@@ -41,7 +50,6 @@ app.post("/account/registration", async (req, res) => {
         userid: userToAdd.userid,
         password: userToAdd.password,
       });
-      console.log(user);
       res.status(201).send(user);
     } else {
       res.status(409).send("Conflicting username");
@@ -51,12 +59,12 @@ app.post("/account/registration", async (req, res) => {
   }
 });
 
-app.get("/users", (req, res) => {
-  const userToCheck = req.body;
-  const user = checkUser(userToCheck.userid, userToCheck.password);
+// get all users
+app.get("/users", authenticateToken, async (req, res) => {
+  const users = await getUsers();
 
-  if (user) {
-    res.status(200).send("User successfully authenticated");
+  if (users) {
+    res.status(200).send(users);
   } else {
     res.status(401).send("Invalid credentials");
   }

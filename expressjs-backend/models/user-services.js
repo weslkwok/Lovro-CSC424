@@ -1,11 +1,12 @@
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+import jwt from "jsonwebtoken";
 import UserModel from "./user.js";
 
-// mongoose.set("debug", true);
+dotenv.config({ path: "./config.env" });
 
 // connect to database
-dotenv.config({ path: "./config.env" });
+// mongoose.set("debug", true);
 mongoose
   .connect(process.env.MONGO_URL, {
     useNewUrlParser: true,
@@ -18,7 +19,29 @@ db.once("connected", () => {
   console.log("Database connected successfuly");
 });
 
-async function checkUser(userid, password) {
+function generateAccessToken(userid) {
+  return jwt.sign(userid, process.env.TOKEN_SECRET, { expiresIn: "1800s" });
+}
+
+function authenticateToken(req, res, next) {
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
+
+  if (token == null) return res.sendStatus(401);
+
+  jwt.verify(token, process.env.TOKEN_SECRET, (err, user) => {
+    if (err) {
+      console.log(err);
+      return res.sendStatus(403);
+    }
+
+    req.user = user;
+
+    next();
+  });
+}
+
+async function authenticateUser(userid, password) {
   try {
     return await UserModel.find({ userid: userid, password: password });
   } catch (error) {
@@ -57,4 +80,16 @@ async function addUser(user) {
   }
 }
 
-export { checkUser, getUserByName, validatePassword, addUser };
+async function getUsers() {
+  return await UserModel.find();
+}
+
+export {
+  generateAccessToken,
+  authenticateToken,
+  authenticateUser,
+  getUserByName,
+  validatePassword,
+  addUser,
+  getUsers,
+};
