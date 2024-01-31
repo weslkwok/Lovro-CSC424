@@ -11,7 +11,7 @@ export const Home = () => {
     try {
       const user = { userid: username, password: password };
       const response = await axios.post(
-        "http://localhost:8000/account/login",
+        "https://localhost:8000/account/login",
         user
       );
       if (response.status === 200) auth.onLogin(response.data);

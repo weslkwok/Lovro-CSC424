@@ -1,21 +1,21 @@
 import axios from "axios";
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthProvider";
 
 export const Landing = () => {
   const { auth } = useAuth();
+  const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    async function handleLogin() {
+    async function getContacts() {
       const cookie = document.cookie.split("=")[1];
-      console.log(cookie);
 
       if (cookie) {
         try {
-          const response = await axios.get("http://localhost:8000/users", {
+          const response = await axios.get("https://localhost:8000/users", {
             headers: { authorization: `Bearer ${cookie}` },
           });
-          if (response.status === 200) console.log(response);
+          if (response.status === 200) setUsers(response.data);
 
           return response;
         } catch (error) {
@@ -24,13 +24,19 @@ export const Landing = () => {
         }
       }
     }
-    handleLogin();
-  });
+    getContacts();
+  }, []);
 
   return (
-    <>
+    <div>
       <h2>Landing (Protected)</h2>
       <div> Authenticated as {auth.token}</div>
-    </>
+      <h2>Contacts:</h2>
+      <ul>
+        {users.map((user) => (
+          <li key={user.userid}>{user.userid}</li>
+        ))}
+      </ul>
+    </div>
   );
 };

@@ -1,6 +1,8 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import https from "https";
+import fs from "fs";
 import {
   generateAccessToken,
   authenticateToken,
@@ -20,6 +22,18 @@ const port = process.env.PORT;
 app.use(express.json());
 app.use(cors());
 
+https
+  .createServer(
+    {
+      key: fs.readFileSync("./keys/key.pem"),
+      cert: fs.readFileSync("./keys/cert.pem"),
+    },
+    app
+  )
+  .listen(port, () => {
+    console.log(`App listening at https://localhost:${port}`);
+  });
+
 app.get("/", (req, res) => {
   res.send("Hello World!");
 });
@@ -29,9 +43,9 @@ app.get("/", (req, res) => {
 // authenticate user
 app.post("/account/login", async (req, res) => {
   const userToCheck = req.body;
-  const user = await authenticateUser(userToCheck.userid, userToCheck.password);
+  const auth = await authenticateUser(userToCheck.userid, userToCheck.password);
 
-  if (user.length) {
+  if (auth) {
     const token = generateAccessToken({ userid: userToCheck.userid });
     res.status(200).json(token);
   } else {
@@ -68,8 +82,4 @@ app.get("/users", authenticateToken, async (req, res) => {
   } else {
     res.status(401).send("Invalid credentials");
   }
-});
-
-app.listen(port, () => {
-  console.log(`App listening at http://localhost:${port}`);
 });

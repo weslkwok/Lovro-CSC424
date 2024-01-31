@@ -43,10 +43,12 @@ function authenticateToken(req, res, next) {
 
 async function authenticateUser(userid, password) {
   try {
-    return await UserModel.find({ userid: userid, password: password });
+    const user = await UserModel.findOne({ userid: userid });
+    const result = await user.comparePassword(password);
+    return result;
   } catch (error) {
     console.log(error);
-    return undefined;
+    return false;
   }
 }
 
