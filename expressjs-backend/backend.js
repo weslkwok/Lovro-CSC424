@@ -12,7 +12,7 @@ import {
   addUser,
   getUsers,
 } from "./models/user-services.js";
-const esapi = require('node-esapi');
+import esapi from "node-esapi";
 
 dotenv.config({ path: "./config.env" });
 
