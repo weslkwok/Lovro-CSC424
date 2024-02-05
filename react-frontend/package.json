@@ -12,9 +12,6 @@
     "react-router-dom": "^6.21.1",
     "web-vitals": "^2.1.4"
   },
-  "devDependencies": {
-    "react-scripts": "^5.0.1"
-  },
   "scripts": {
     "start":
         "HTTPS=true SSL_CRT_FILE=./cert/cert.pem SSL_KEY_FILE=./cert/key.pem react-scripts start",
@@ -44,6 +41,7 @@
     "nth-check": "2.1.1"
   },
   "devDependencies": {
-    "@babel/plugin-proposal-private-property-in-object": "^7.21.11"
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "react-scripts": "^5.0.1"
   }
 }
