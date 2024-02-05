@@ -65,10 +65,15 @@ app.post("/account/registration", async (req, res) => {
   if (validatePassword(userToAdd.password)) {
     if (!matchingUser.length) {
       const user = await addUser({
-        userid: esapi.encoder().encodeForHtml(userToAdd.userid),
-        password: esapi.encoder().encodeForHtml(userToAdd.password),
+        userid: userToAdd.userid,
+        password: userToAdd.password,
       });
-      res.status(201).send(user);
+      const safeUser = {
+        userid: esapi.encoder().encodeForHtml(userToAdd.userid),
+        // not sure if we need to be sending back to pwd...
+        password: esapi.encoder().encodeForHtml(userToAdd.password),
+      }
+      res.status(201).send(safeUser);
     } else {
       res.status(409).send("Conflicting username");
     }
