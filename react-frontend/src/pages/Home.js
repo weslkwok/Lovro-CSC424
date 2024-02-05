@@ -1,9 +1,9 @@
 import axios from "axios";
 import { useState } from "react";
-import { useAuth } from "./context/AuthProvider";
+import { useAuth } from "../context/AuthProvider";
 
 export const Home = () => {
-  const { value } = useAuth();
+  const { auth } = useAuth();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
@@ -11,14 +11,14 @@ export const Home = () => {
     try {
       const user = { userid: username, password: password };
       const response = await axios.post(
-        "http://localhost:8000/account/login",
+        "https://localhost:8000/account/login",
         user
       );
-      value.onLogin();
+      if (response.status === 200) auth.onLogin(response.data);
+
       return response;
     } catch (error) {
       if (error.response.status === 401) alert("Invalid credentials");
-      console.log();
       return false;
     }
   }

@@ -1,8 +1,8 @@
 import React from "react";
 import { Routes, Route, Link } from "react-router-dom";
-import { Home } from "./Home";
-import { Landing } from "./Landing";
-import { Registration } from "./Registration";
+import { Home } from "./pages/Home";
+import { Landing } from "./pages/Landing";
+import { Registration } from "./pages/Registration";
 import { useAuth } from "./context/AuthProvider";
 import { AuthProvider } from "./context/AuthProvider";
 import { ProtectedRoute } from "./utils/ProtectedRoute";
@@ -37,15 +37,15 @@ const App = () => {
 };
 
 const Navigation = () => {
-  const { value } = useAuth();
+  const { auth } = useAuth();
 
   return (
     <nav>
       <Link to="/home">Home</Link>
       <Link to="/registration">Registration</Link>
       <Link to="/landing">Landing</Link>
-      {value.token && (
-        <button type="button" onClick={value.onLogout}>
+      {auth.token && (
+        <button type="button" onClick={auth.onLogout}>
           Sign Out
         </button>
       )}

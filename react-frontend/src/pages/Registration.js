@@ -10,15 +10,16 @@ export const Registration = () => {
     try {
       const user = { userid: username, password: password };
       const response = await axios.post(
-        "http://localhost:8000/account/registration",
+        "https://localhost:8000/account/registration",
         user
       );
       return response;
     } catch (error) {
+      console.log(error);
       if (error.response.status === 400)
         alert("Insufficient password strength");
       if (error.response.status === 409) alert("Username already taken");
-      console.log();
+      return false;
     }
   }
 
