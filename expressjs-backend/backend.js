@@ -12,10 +12,14 @@ import {
   addUser,
   getUsers,
 } from "./models/user-services.js";
+const esapi = require('node-esapi');
 
 dotenv.config({ path: "./config.env" });
 
 const app = express();
+// disable the x-powered-by-header for security purposes
+// https://stackoverflow.com/questions/10717685/how-to-remove-x-powered-by-in-expressjs
+app.disable('x-powered-by');
 
 const port = process.env.PORT;
 
@@ -61,8 +65,8 @@ app.post("/account/registration", async (req, res) => {
   if (validatePassword(userToAdd.password)) {
     if (!matchingUser.length) {
       const user = await addUser({
-        userid: userToAdd.userid,
-        password: userToAdd.password,
+        userid: esapi.encoder().encodeForHtml(userToAdd.userid),
+        password: esapi.encoder().encodeForHtml(userToAdd.password),
       });
       res.status(201).send(user);
     } else {
