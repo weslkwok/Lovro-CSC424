@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const cors = require("cors");
+const esapi = require('node-esapi');
 const port = 8000;
 
 app.use(express.json());
@@ -50,7 +51,10 @@ app.post("/account/registration", (req, res) => {
   if (validatePassword(userToAdd.password)) {
     if (!matchingUser) {
       users["users_list"].push(userToAdd);
-      res.status(201).send(userToAdd).end();
+      const safeResponse = {
+        userid: esapi.encoder().encodeForHtml(userToAdd.userid),
+      }
+      res.status(201).send(safeResponse).end();
     } else {
       res.status(409).send("Conflicting username");
     }
