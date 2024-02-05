@@ -1,5 +1,8 @@
 const express = require("express");
 const app = express();
+// disable the x-powered-by-header for security purposes
+// https://stackoverflow.com/questions/10717685/how-to-remove-x-powered-by-in-expressjs
+app.disable('x-powered-by');
 const cors = require("cors");
 const esapi = require('node-esapi');
 const port = 8000;
